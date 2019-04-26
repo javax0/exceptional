@@ -1,0 +1,17 @@
+<library>
+    <book>
+        <author>Peter Verhas</author>
+        <reviewer>Jeff Friesen</reviewer>
+        <publisher>Packt Publishing Ltd.</publisher>
+        <title>Java 9 Programming By Example</title>
+        <year>2017</year>
+        <isbn>978-1-78646-828-4</isbn>
+    </book>
+    <book>
+        <author>Peter Verhas</author>
+        <publisher>Packt Publishing Ltd.</publisher>
+        <title>Java Projects - Second Edition</title>
+        <year>2018</year>
+        <isbn>978-1-78913-189-5</isbn>
+    </book>
+</library>
