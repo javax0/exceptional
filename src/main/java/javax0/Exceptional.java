@@ -68,18 +68,18 @@ public class Exceptional<H> {
         return new Exceptional<>(optional.filter(predicate));
     }
 
-    public <U> Exceptional<U> map(Function<? super H, ? extends U> mapper) {
-        return new Exceptional<>(optional.map(mapper));
+    public <U> Exceptional<U> map(ThrowingFunction<? super H, ? extends U> mapper) {
+        return new Exceptional<>(optional.map(mapper.lame()));
     }
 
-    public <U> Exceptional<U> flatMap(Function<? super H, ? extends Exceptional<? extends U>> mapper) {
+    public <U> Exceptional<U> flatMap(ThrowingFunction<? super H, ? extends Exceptional<? extends U>> mapper) {
         Objects.requireNonNull(mapper);
         if (!isPresent()) {
             return empty();
         } else {
             @SuppressWarnings("unchecked")
-            Exceptional<U> r = (Exceptional<U>) mapper.apply(optional.get());
-            return Objects.requireNonNull(r);
+            Exceptional<U> r = (Exceptional<U>) mapper.lame().apply(optional.get());
+            return r == null ? empty() : r;
         }
     }
 
@@ -147,7 +147,37 @@ public class Exceptional<H> {
                 : "Exceptional.empty";
     }
 
+    @FunctionalInterface
     public interface ThrowingSupplier<Z> {
         Z get() throws Exception;
+    }
+
+    @FunctionalInterface
+    public interface ThrowingFunction<T, R> {
+        static <T> ThrowingFunction<T, T> identity() {
+            return t -> t;
+        }
+
+        R apply(T t) throws Exception;
+
+        default Function<T, R> lame() {
+            return (T t) -> {
+                try {
+                    return apply(t);
+                } catch (Exception e) {
+                    return null;
+                }
+            };
+        }
+
+        default <V> ThrowingFunction<V, R> compose(ThrowingFunction<? super V, ? extends T> before) {
+            Objects.requireNonNull(before);
+            return (V v) -> apply(before.apply(v));
+        }
+
+        default <V> ThrowingFunction<T, V> andThen(ThrowingFunction<? super R, ? extends V> after) {
+            Objects.requireNonNull(after);
+            return (T t) -> after.apply(apply(t));
+        }
     }
 }

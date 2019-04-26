@@ -37,7 +37,7 @@ class TestExceptional {
     }
 
     @Test
-    @DisplayName("when 'ofNullanble' is null and 'or' throws then orElse is taken into account")
+    @DisplayName("when 'ofNullable' is null and 'or' throws then orElse is taken into account")
     void testThrowsOfNullOrElse() {
         Assertions.assertEquals("Alma", Exceptional.ofNullable(TestExceptional::nuller).or(TestExceptional::thrower).orElse("Alma"));
     }
@@ -58,5 +58,29 @@ class TestExceptional {
     @DisplayName("after a value 'or( () -> null)' does not matter")
     void testNullOrNullIsIgnored() {
         Assertions.assertEquals("korte", Exceptional.<Object>of(() -> "korte").or(TestExceptional::nuller).or(TestExceptional::object).orElse("Alma"));
+    }
+
+    @Test
+    @DisplayName("when map throws exception it is empty again")
+    void testLameMap() {
+        Assertions.assertEquals("Alma", Exceptional.<Object>of(() -> "korte").map(s -> thrower()).orElse("Alma"));
+    }
+
+    @Test
+    @DisplayName("when map does not throw exception it rules")
+    void testGoodMap() {
+        Assertions.assertEquals("szilva", Exceptional.<Object>of(() -> "korte").map(s -> "szilva").orElse("Alma"));
+    }
+
+    @Test
+    @DisplayName("when flatMap throws exception it is empty again")
+    void testFlatMap() {
+        Assertions.assertEquals("Alma", Exceptional.<Object>of(() -> "korte").flatMap(s -> Exceptional.of(TestExceptional::nuller)).orElse("Alma"));
+    }
+
+    @Test
+    @DisplayName("when flatMap does not throw exception it rules")
+    void testGoodFlatMap() {
+        Assertions.assertEquals("szilva", Exceptional.<Object>of(() -> "korte").flatMap(s -> Exceptional.of(() -> "szilva")).orElse("Alma"));
     }
 }
