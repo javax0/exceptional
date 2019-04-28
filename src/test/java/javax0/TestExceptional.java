@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 class TestExceptional {
 
+
     @Test
     @DisplayName("when 'of' throws exception then orElse is taken into account")
     void testThrowOrElse() {
