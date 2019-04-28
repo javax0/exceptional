@@ -78,3 +78,13 @@ prone to `NullPointerException` to
 ```
 
 if that is more readable.
+
+# Maven
+
+```xml
+<dependency>
+  <groupId>com.javax0</groupId>
+  <artifactId>exceptional</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
