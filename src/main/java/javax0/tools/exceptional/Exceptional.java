@@ -1,5 +1,6 @@
-package javax0;
+package javax0.tools.exceptional;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -23,6 +24,49 @@ public class Exceptional<H> {
     public static <T> Exceptional<T> empty() {
         //noinspection unchecked
         return (Exceptional<T>) EMPTY;
+    }
+
+    public static class Catching<T> {
+        private final Class<? extends Exception>[] catchingOnly;
+
+        private Catching(Class<? extends Exception>[] catchingOnly) {
+            this.catchingOnly = catchingOnly;
+        }
+
+        private static boolean isOneOf(Exception e, Class<? extends Exception>[] ecs) {
+            return Arrays.stream(ecs).anyMatch(ec -> ec.isAssignableFrom(e.getClass()));
+        }
+
+        private static <T> Exceptional<T> empty(Exception e, Class<? extends Exception>[] ecs) throws Exception {
+            if (isOneOf(e, ecs)) {
+                return Exceptional.empty();
+            } else {
+                throw e;
+            }
+        }
+
+        public Exceptional<T> of(ThrowingSupplier<T> s) throws Exception {
+            final T value;
+            try {
+                value = s.get();
+            } catch (Exception e) {
+                return empty(e, catchingOnly);
+            }
+            return new Exceptional<>(Optional.of(value));
+        }
+
+        public Exceptional<T> ofNullable(ThrowingSupplier<T> s) throws Exception {
+            try {
+                T value = s.get();
+                return new Exceptional<>(Optional.ofNullable(value));
+            } catch (Exception e) {
+                return empty(e, catchingOnly);
+            }
+        }
+    }
+
+    public static <T> Catching<T> catchingOnly(Class<? extends Exception>... exceptions) {
+        return new Catching(exceptions);
     }
 
     public static <T> Exceptional<T> of(ThrowingSupplier<T> s) {
@@ -143,8 +187,8 @@ public class Exceptional<H> {
     @Override
     public String toString() {
         return optional.isPresent()
-                ? String.format("Exceptional[%s]", optional.get())
-                : "Exceptional.empty";
+            ? String.format("Exceptional[%s]", optional.get())
+            : "Exceptional.empty";
     }
 
     @FunctionalInterface

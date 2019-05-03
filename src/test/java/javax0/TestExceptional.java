@@ -1,5 +1,6 @@
 package javax0;
 
+import javax0.tools.exceptional.Exceptional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,14 @@ class TestExceptional {
     void testThrowOrElse() {
         Assertions.assertEquals("Alma", Exceptional.of(() -> {
             throw new Exception();
+        }).orElse("Alma"));
+    }
+
+    @Test
+    @DisplayName("when 'of' throws exception then orElse is taken into account")
+    void testThrowCatchedOrElse() throws Exception {
+        Assertions.assertEquals("Alma", Exceptional.catchingOnly(NullPointerException.class).of(() -> {
+            throw new NullPointerException();
         }).orElse("Alma"));
     }
 

@@ -16,7 +16,7 @@ Exceptional.of(() -> throw new Exception()).orElse("Alma")
 
 what you get is `"Alma"`. The major difference from `Optional` is that
 the argument of the method `of()` is a supplier (to be specific an
-`javax0.Exceptional.ThrowingSupplier`). In case the supplier throws an
+`javax0.tools.exceptional.Exceptional.ThrowingSupplier`). In case the supplier throws an
 `Exception` then the value inside the returned `Exceptional` object will
 be "empty".
 
@@ -28,12 +28,12 @@ The methods that return `Optional` in the `Optional` class here return
 `Exceptional`. If it is a surprise you probably should not read on.
 
 The static methods `of()` and `ofNullable()` and the non-static methods
-`or()` and `orNullable()` accept `javax0.Exceptional.ThrowingSupplier`
+`or()` and `orNullable()` accept `javax0.tools.exceptional.Exceptional.ThrowingSupplier`
 as argument. (Also note that `orNullable()` barely exists in
 `Optional` if at all.)
 
 The methods `map()` and `flatMap()` accept
-`javax0.Exceptional.ThrowingFunction` as argument. If any of these throw
+`javax0.tools.exceptional.Exceptional.ThrowingFunction` as argument. If any of these throw
 exception the resulting `Exceptional` will be empty.
 
 These are the non-taxative features raw and uncooked. What is it good
